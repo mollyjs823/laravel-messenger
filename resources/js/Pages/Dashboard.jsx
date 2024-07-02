@@ -6,6 +6,7 @@ import MessageItem from "@/Components/App/MessageItem.jsx";
 import ConversationHeader from "@/Components/App/ConversationHeader.jsx";
 import MessageInput from "@/Components/App/MessageInput.jsx";
 import {useEventBus} from "@/EventBus.jsx";
+import AttachmentPreviewModal from "@/Components/App/AttachmentPreviewModal.jsx";
 
 function Dashboard({ selectedConversation = null, messages = null }) {
     const [initComplete, setInitComplete] = useState(true);
@@ -14,6 +15,8 @@ function Dashboard({ selectedConversation = null, messages = null }) {
     const [scrollFromBottom, setScrollFromBottom] = useState(0);
     const messagesCtrlRef = useRef(null);
     const loadMoreIntersect = useRef(null);
+    const [showAttachmentPreview, setShowAttachmentPreview] = useState(false);
+    const [previewAttachment, setPreviewAttachment] = useState({});
     const { on } = useEventBus();
 
     const messageCreated = (message) => {
@@ -105,6 +108,14 @@ function Dashboard({ selectedConversation = null, messages = null }) {
         };
     }, [localMessages]);
 
+    const onAttachmentClick = (attachments, ind) => {
+        setPreviewAttachment({
+            attachments,
+            ind
+        });
+        setShowAttachmentPreview(true);
+    }
+
     return (<>
         {!messages && (
             <div className="flex flex-col gap-8 justify-center items-center text-center h-full opacity-35">
@@ -137,6 +148,7 @@ function Dashboard({ selectedConversation = null, messages = null }) {
                                 <MessageItem
                                     key={message.id}
                                     message={message}
+                                    attachmentClick={onAttachmentClick}
                                 />
                             ))}
                         </div>
@@ -144,6 +156,15 @@ function Dashboard({ selectedConversation = null, messages = null }) {
                 </div>
                 <MessageInput conversation={selectedConversation} />
             </>
+        )}
+
+        {previewAttachment.attachments && (
+            <AttachmentPreviewModal
+                attachments={previewAttachment.attachments}
+                index={previewAttachment.ind}
+                show={showAttachmentPreview}
+                onClose={() => setShowAttachmentPreview(false)}
+            />
         )}
     </>);
 }
