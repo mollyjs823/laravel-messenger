@@ -21,6 +21,7 @@ const MessageInput = ({conversation = null }) => {
     const [chosenFiles, setChosenFiles] = useState([]);
     const [uploadProgress, setUploadProgress] = useState(0);
 
+
     const onFileChange = (ev) => {
         const files = ev.target.files;
 
